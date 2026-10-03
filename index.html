@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulasi Sidang: Pancasila & UUD NRI 1945</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏛️ Simulasi Sidang Konstitusional</h1>
+            <p>Pendidikan Pancasila Kelas XI - Bab I & Bab II</p>
+        </header>
+
+        <main id="app">
+            <div id="stats-bar">
+                <span>Skor Penjiwaan Pancasila: <strong id="score-pancasila">0</strong></span>
+                <span>Skor Indikator Demokrasi: <strong id="score-demokrasi">0</strong></span>
+            </div>
+
+            <div id="scenario-card" class="card">
+                <div class="badge" id="chapter-badge">Bab I: Menjiwai Pancasila</div>
+                <h2 id="title">Ruang Sidang BPUPK / PPKI</h2>
+                <p id="dialogue">Memuat skenario...</p>
+                <div id="options-container" class="options-grid"></div>
+            </div>
+
+            <div id="feedback" class="feedback-card hidden">
+                <h3>Analisis Konstitusional</h3>
+                <p id="feedback-text"></p>
+                <button id="next-btn" onclick="nextQuestion()">Lanjutkan Sidang ➔</button>
+            </div>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
