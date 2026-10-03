@@ -3,8 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulasi Sidang: Pancasila & UUD NRI 1945</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Simulasi Sidang Konstitusional - Pancasila & UUD NRI 1945</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f4f6f9;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            background: #1e293b;
+            color: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        header p {
+            color: #cbd5e1;
+            font-size: 0.95rem;
+        }
+
+        #stats-bar {
+            display: flex;
+            justify-content: space-between;
+            background: #e2e8f0;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            color: #334155;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #2563eb;
+            color: white;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        #title {
+            font-size: 1.3rem;
+            color: #0f172a;
+            margin-bottom: 10px;
+        }
+
+        #dialogue {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            color: #475569;
+        }
+
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        button.option-btn {
+            background: #f8fafc;
+            border: 2px solid #cbd5e1;
+            padding: 14px 18px;
+            border-radius: 8px;
+            text-align: left;
+            font-size: 0.98rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #1e293b;
+            line-height: 1.4;
+        }
+
+        button.option-btn:hover:not(:disabled) {
+            background: #eff6ff;
+            border-color: #3b82f6;
+            color: #1d4ed8;
+        }
+
+        button.option-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .feedback-card {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        .feedback-card h3 {
+            color: #166534;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        .feedback-card p {
+            color: #15803d;
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+
+        /* Menyembunyikan feedback secara mutlak sebelum opsi dipilih */
+        .hidden {
+            display: none !important;
+        }
+
+        #next-btn {
+            margin-top: 15px;
+            background: #16a34a;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: background 0.2s;
+        }
+
+        #next-btn:hover {
+            background: #15803d;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -15,24 +171,182 @@
 
         <main id="app">
             <div id="stats-bar">
-                <span>Skor Penjiwaan Pancasila: <strong id="score-pancasila">0</strong></span>
-                <span>Skor Indikator Demokrasi: <strong id="score-demokrasi">0</strong></span>
+                <span>Skor Pancasila: <strong id="score-pancasila">0</strong></span>
+                <span>Skor Demokrasi: <strong id="score-demokrasi">0</strong></span>
             </div>
 
             <div id="scenario-card" class="card">
-                <div class="badge" id="chapter-badge">Bab I: Menjiwai Pancasila</div>
-                <h2 id="title">Ruang Sidang BPUPK / PPKI</h2>
-                <p id="dialogue">Memuat skenario...</p>
+                <div class="badge" id="chapter-badge">Memuat...</div>
+                <h2 id="title">Memuat Skenario...</h2>
+                <p id="dialogue">Silakan tunggu sebentar...</p>
                 <div id="options-container" class="options-grid"></div>
             </div>
 
             <div id="feedback" class="feedback-card hidden">
                 <h3>Analisis Konstitusional</h3>
                 <p id="feedback-text"></p>
-                <button id="next-btn" onclick="nextQuestion()">Lanjutkan Sidang ➔</button>
+                <button id="next-btn">Lanjutkan Sidang ➔</button>
             </div>
         </main>
     </div>
-    <script src="script.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const scenarios = [
+                // BAB I: Menjiwai Pancasila
+                {
+                    chapter: "Bab I: Menjiwai Pancasila",
+                    title: "Agenda 1: Keterkaitan Antarsila Pancasila",
+                    dialogue: "Dalam sidang pembahasan norma berbangsa, muncul perdebatan mengenai penerapan nilai keagamaan dalam hukum publik. Sebagai pimpinan sidang, bagaimana Anda menegaskan keterkaitan antarsila Pancasila?",
+                    options: [
+                        {
+                            text: "Menegaskan bahwa pengamalan nilai Ketuhanan (Sila 1) wajib diwujudkan melalui sikap menghormati kemanusiaan (Sila 2) dan menjaga persatuan (Sila 3).",
+                            pancasilaScore: 10,
+                            demokrasiScore: 5,
+                            feedback: "Sangat Tepat! Sila pertama menjiwai dan mendasari sila-sila lainnya. Nilai Ketuhanan tidak berdiri sendiri, melainkan harus mewujud dalam tindakan kemanusiaan dan persatuan."
+                        },
+                        {
+                            text: "Memisahkan urusan keagamaan sepenuhnya dari nilai kemanusiaan dan keadilan sosial.",
+                            pancasilaScore: 0,
+                            demokrasiScore: 0,
+                            feedback: "Kurang Tepat. Pancasila merupakan satu kesatuan utuh yang sistematis dan saling menjiwai, tidak dapat dipisah-pisahkan."
+                        }
+                    ]
+                },
+                {
+                    chapter: "Bab I: Menjiwai Pancasila",
+                    title: "Agenda 2: Kedudukan Ideologi Negara",
+                    dialogue: "Peserta sidang mempertanyakan peran Pancasila dalam menghadapi perkembangan era digital dan globalisasi. Apa penjelasan resmi yang Anda sampaikan dalam sidang?",
+                    options: [
+                        {
+                            text: "Pancasila berfungsi sebagai 'Meja Statis' (pemersatu bangsa) sekaligus 'Leitstar Dinamis' (bintang penuntun yang adaptif terhadap zaman).",
+                            pancasilaScore: 10,
+                            demokrasiScore: 5,
+                            feedback: "Sangat Tepat! Sukarno menegaskan Pancasila sebagai fondasi kokoh yang menyatukan keberagaman sekaligus bintang penuntun yang fleksibel merespons zaman."
+                        },
+                        {
+                            text: "Menjadikan Pancasila sebagai doktrin kaku yang melarang pengaruh teknologi modern.",
+                            pancasilaScore: 0,
+                            demokrasiScore: 0,
+                            feedback: "Kurang Tepat. Pancasila adalah ideologi terbuka yang dinamis, mampu menyerap perkembangan zaman tanpa kehilangan nilai utamanya."
+                        }
+                    ]
+                },
+
+                // BAB II: Demokrasi Berdasarkan UUD NRI Tahun 1945
+                {
+                    chapter: "Bab II: Demokrasi UUD NRI 1945",
+                    title: "Agenda 3: Evaluasi Periodisasi Demokrasi",
+                    dialogue: "Sidang mengevaluasi sejarah ketatanegaraan Indonesia. Mengapa pada periode UUDS 1950 (17 Agustus 1950 - 5 Juli 1959) terjadi ketidakstabilan politik yang tinggi?",
+                    options: [
+                        {
+                            text: "Penerapan sistem demokrasi parlementer menyebabkan kabinet sering berganti (7 kali) dan dewan konstituante gagal menyusun UUD baru.",
+                            pancasilaScore: 5,
+                            demokrasiScore: 10,
+                            feedback: "Tepat Sekali! Instabilitas politik masa UUDS 1950 mendorong dilakukannya Dekrit Presiden 5 Juli 1959 untuk kembali ke UUD 1945."
+                        },
+                        {
+                            text: "Karena sistem pemerintahan presidensial terlalu memusatkan kekuasaan pada Presiden.",
+                            pancasilaScore: 0,
+                            demokrasiScore: 0,
+                            feedback: "Kurang Tepat. Pada periode UUDS 1950 Indonesia menggunakan sistem Parlementer, bukan Presidensial."
+                        }
+                    ]
+                },
+                {
+                    chapter: "Bab II: Demokrasi UUD NRI 1945",
+                    title: "Agenda 4: Prosedur Amandemen UUD (Pasal 37)",
+                    dialogue: "Anggota majelis mengusulkan perubahan pasal UUD NRI Tahun 1945. Agar pengajuan dan pengesahan perubahan konstitusi sah sesuai Pasal 37, syarat apa yang harus dipenuhi?",
+                    options: [
+                        {
+                            text: "Pengusulan oleh min. 1/3 anggota MPR, sidang dihadiri min. 2/3 anggota MPR, dan disetujui min. 50% + 1 dari seluruh anggota MPR.",
+                            pancasilaScore: 5,
+                            demokrasiScore: 10,
+                            feedback: "Sempurna! Ini sesuai dengan ketentuan pasal 37 UUD NRI Tahun 1945 tentang syarat dan kuorum amandemen konstitusi."
+                        },
+                        {
+                            text: "Cukup disetujui secara sepihak oleh Presiden tanpa persetujuan Majelis Permusyawaratan Rakyat.",
+                            pancasilaScore: 0,
+                            demokrasiScore: 0,
+                            feedback: "Kurang Tepat. Wewenang mengubah dan menetapkan UUD berada di tangan MPR melalui mekanisme tata cara konstitusional."
+                        }
+                    ]
+                }
+            ];
+
+            let currentIndex = 0;
+            let totalPancasila = 0;
+            let totalDemokrasi = 0;
+
+            const chapterBadge = document.getElementById("chapter-badge");
+            const titleElem = document.getElementById("title");
+            const dialogueElem = document.getElementById("dialogue");
+            const optionsContainer = document.getElementById("options-container");
+            const feedbackElem = document.getElementById("feedback");
+            const feedbackText = document.getElementById("feedback-text");
+            const nextBtn = document.getElementById("next-btn");
+            const scorePancasilaElem = document.getElementById("score-pancasila");
+            const scoreDemokrasiElem = document.getElementById("score-demokrasi");
+
+            function loadScenario() {
+                const current = scenarios[currentIndex];
+                chapterBadge.innerText = current.chapter;
+                titleElem.innerText = current.title;
+                dialogueElem.innerText = current.dialogue;
+                
+                optionsContainer.innerHTML = "";
+
+                current.options.forEach((opt) => {
+                    const btn = document.createElement("button");
+                    btn.className = "option-btn";
+                    btn.innerText = opt.text;
+                    btn.onclick = () => selectOption(opt);
+                    optionsContainer.appendChild(btn);
+                });
+
+                feedbackElem.classList.add("hidden");
+            }
+
+            function selectOption(option) {
+                totalPancasila += option.pancasilaScore;
+                totalDemokrasi += option.demokrasiScore;
+
+                scorePancasilaElem.innerText = totalPancasila;
+                scoreDemokrasiElem.innerText = totalDemokrasi;
+
+                feedbackText.innerText = option.feedback;
+                feedbackElem.classList.remove("hidden");
+                
+                const btns = document.querySelectorAll(".option-btn");
+                btns.forEach(b => b.disabled = true);
+            }
+
+            nextBtn.onclick = function() {
+                currentIndex++;
+                if (currentIndex < scenarios.length) {
+                    loadScenario();
+                } else {
+                    showFinalResult();
+                }
+            };
+
+            function showFinalResult() {
+                const app = document.getElementById("app");
+                app.innerHTML = `
+                    <div class="card" style="text-align: center;">
+                        <h2>🏛️ Sidang Konstitusional Selesai!</h2>
+                        <p style="margin: 15px 0; color: #475569;">Selamat, Anda telah menyelesaikan seluruh agenda sidang Pendidikan Pancasila Bab I & Bab II.</p>
+                        <div style="font-size: 1.1rem; margin: 20px 0; background: #f8fafc; padding: 15px; border-radius: 8px;">
+                            <p style="margin-bottom: 8px;">Skor Penjiwaan Pancasila: <strong>${totalPancasila}</strong> / 30</p>
+                            <p>Skor Indikator Demokrasi: <strong>${totalDemokrasi}</strong> / 30</p>
+                        </div>
+                        <button onclick="location.reload()" id="next-btn">Ulangi Simulasi</button>
+                    </div>
+                `;
+            }
+
+            loadScenario();
+        });
+    </script>
 </body>
 </html>
